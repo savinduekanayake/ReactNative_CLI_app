@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import {
+    // to get the theme variable settinng to button
+    useTheme,
     Avatar,
     Title,
     Caption,
@@ -18,17 +20,19 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {AuthContext} from '../components/context';
+import { AuthContext } from '../components/context';
+
 
 export function DrawerContent(props) {
 
-    const  [isDarkTheme, setIsDarkTheme] = React.useState(false);
+    // to get the dark-boolean value
+    const paperTheme = useTheme();
 
-    const { signOut } = React.useContext(AuthContext);
+    const { signOut, toggleTheme } = React.useContext(AuthContext);
 
-    const toggleTheme = () => {
-        setIsDarkTheme(!isDarkTheme);
-    }
+    // const toggleTheme = () => {
+    //     setIsDarkTheme(!isDarkTheme);
+    // }
 
     return (
         <View style={{ flex: 1 }}>
@@ -64,7 +68,7 @@ export function DrawerContent(props) {
 
                     <Drawer.Section style={styles.drawerSection} >
                         <DrawerItem
-                            icon={({color, size}) => (
+                            icon={({ color, size }) => (
                                 <Icon
                                     name="home-outline"
                                     color={color}
@@ -72,10 +76,10 @@ export function DrawerContent(props) {
                                 />
                             )}
                             label='Home'
-                            onPress={() => {props.navigation.navigate('Home') }}
+                            onPress={() => { props.navigation.navigate('Home') }}
                         />
-                         <DrawerItem
-                            icon={({color, size}) => (
+                        <DrawerItem
+                            icon={({ color, size }) => (
                                 <Icon
                                     name="account-outline"
                                     color={color}
@@ -83,10 +87,10 @@ export function DrawerContent(props) {
                                 />
                             )}
                             label='Profile'
-                            onPress={() => { props.navigation.navigate('Profile')}}
+                            onPress={() => { props.navigation.navigate('Profile') }}
                         />
                         <DrawerItem
-                            icon={({color, size}) => (
+                            icon={({ color, size }) => (
                                 <Icon
                                     name="bookmark-outline"
                                     color={color}
@@ -94,10 +98,10 @@ export function DrawerContent(props) {
                                 />
                             )}
                             label='Bookmarks'
-                            onPress={() => {props.navigation.navigate('Bookmarks') }}
+                            onPress={() => { props.navigation.navigate('Bookmarks') }}
                         />
                         <DrawerItem
-                            icon={({color, size}) => (
+                            icon={({ color, size }) => (
                                 <Icon
                                     name="account-check-outline"
                                     color={color}
@@ -105,10 +109,10 @@ export function DrawerContent(props) {
                                 />
                             )}
                             label='Settings'
-                            onPress={() => {props.navigation.navigate('Settings')}}
+                            onPress={() => { props.navigation.navigate('Settings') }}
                         />
-                       <DrawerItem
-                            icon={({color, size}) => (
+                        <DrawerItem
+                            icon={({ color, size }) => (
                                 <Icon
                                     name="account-check-outline"
                                     color={color}
@@ -121,14 +125,15 @@ export function DrawerContent(props) {
                     </Drawer.Section>
 
                     <Drawer.Section style={styles.drawerSection} >
-                        <TouchableRipple onPress={() => {toggleTheme()}}>
-                        <View style={styles.preference}>
-                            <Text>Dark Theme</Text>
-                            <View pointerEvents="none">
-                                <Switch value={isDarkTheme} />
+                        <TouchableRipple onPress={() => { toggleTheme() }}>
+                            <View style={styles.preference}>
+                                <Text>Dark Theme</Text>
+                                <View pointerEvents="none">
+                                    {/* set the dark boolean  to switch */}
+                                    <Switch value={paperTheme.dark} />
+                                </View>
                             </View>
-                        </View>
-                            
+
                         </TouchableRipple>
                     </Drawer.Section>
 
@@ -144,13 +149,13 @@ export function DrawerContent(props) {
                             </View>
                         </TouchableRipple>
                     </Drawer.section> */}
-                    
+
                 </View>
             </DrawerContentScrollView>
-            
+
             <Drawer.Section style={styles.bottomDraweSection} >
                 <DrawerItem
-                    icon={({color, size}) => (
+                    icon={({ color, size }) => (
                         <Icon
                             name="exit-to-app"
                             color={color}

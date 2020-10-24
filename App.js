@@ -8,13 +8,22 @@
 
 import React, { useEffect } from 'react';
 import {
-  StyleSheet,
   ActivityIndicator,
   View
 } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { 
+  NavigationContainer, 
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme
+ } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+
+import {
+  Provider as PaperProvider,
+  DarkTheme as PaperDarkTheme,
+  DefaultTheme as PaperDefaultTheme
+} from 'react-native-paper';
 
 import MainTabScreen from './screens/MainTabsScreen';
 import { DrawerContent } from './screens/DraweContent';
@@ -33,6 +42,34 @@ const App = () => {
   // for authentication
   // const [isLoading, setIsLoading] = React.useState(true);
   // const [userToken, setUserToken] = React.useState(null);
+
+  const  [isDarkTheme, setIsDarkTheme] = React.useState(false);
+
+// ----------Theme-------------
+const CustomDefaultTheme = {
+  ...NavigationDefaultTheme,
+  ...PaperDefaultTheme,
+  colors: {
+    ...NavigationDefaultTheme.colors,
+    ...PaperDefaultTheme.colors,
+    background: '#ffffff',
+    text: '#333333'
+  }
+}
+
+const CustomDarkTheme = {
+  ...NavigationDarkTheme,
+  ...PaperDarkTheme,
+  colors: {
+    ...NavigationDarkTheme.colors,
+    ...PaperDarkTheme.colors,
+    background: '#333333',
+    text: '#ffffff'
+  }
+}
+
+const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
+
 
   // --------------------Authentication start------------------
   const initialLoginState = {
@@ -78,20 +115,22 @@ const App = () => {
 
 
   const authContext = React.useMemo(() => ({
-    signIn: async(userName, password) => {
+    signIn: async(foundUser) => {
       // setUserToken('fgkj');
       // setIsLoading(false);
-      let userToken;
-      userToken = null;
-      if(userName === 'user' && password === 'pass') {
-        userToken = 'dfgh';
+
+      const userToken =  String(foundUser[0].userToken);
+      const userName =  foundUser[0].userName;
+
+      // if(userName === 'user' && password === 'pass') {
+        // userToken = 'dfgh';
         try{
           // use Async storage
           await AsyncStorage.setItem('userToken', userToken)
         } catch(e) {
           console.log(e);
         }
-      }
+      // }
       console.log('user token', userToken);
       dispatch({ type: 'LOGIN', id: userName, token: userToken })
     },
@@ -111,6 +150,9 @@ const App = () => {
       // setUserToken('fgkj');
       // setIsLoading(false);
       // dispatch({ type: 'LOGIN', id: userName, token: userToken })
+    },
+    toggleTheme: () => {
+      setIsDarkTheme(isDarkTheme => !isDarkTheme);
     }
   }), []);
 
@@ -123,10 +165,11 @@ const App = () => {
       try{
         // use Async storage
         userToken = await AsyncStorage.getItem('userToken');
+        // console.log(userToken)
       } catch(e) {
         console.log(e);
       }
-      dispatch({ type: 'RETRIVE_TOKEN', toke: userToken })
+      dispatch({ type: 'RETRIVE_TOKEN', token: userToken })
     }, 1000)
   }, [])
 
@@ -141,9 +184,11 @@ const App = () => {
   }
 
   return (
-    // passing authContext value 
+    // for dark theme for (react-native-paper) wrap all things from paper provider
+    <PaperProvider theme={theme} >
+    {/* passing authContext value  */}
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
+      <NavigationContainer theme={theme}>
         {loginState.userToken !== null ? (
           //adding content to drawer by drawerContainer 
           <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
@@ -159,6 +204,7 @@ const App = () => {
 
       </NavigationContainer>
     </AuthContext.Provider>
+    </PaperProvider>
   )
 }
 
